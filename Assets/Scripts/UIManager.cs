@@ -1,7 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Net.Sockets;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+
+
 
 public class UIManager : MonoBehaviour
 {
@@ -40,7 +45,10 @@ public class UIManager : MonoBehaviour
     }
     public void ButtonConfirmLogin()
     {
-
+        TcpClient client = new TcpClient("81.39.109.215", 13000);
+        StreamWriter sWriter = new StreamWriter(client.GetStream(), Encoding.ASCII);
+        sWriter.WriteLine("{'nombre':'wololo', 'apellido':'wololo'}" );
+        sWriter.Flush();
     }
     public void ButtonConfirmRegister()
     {
@@ -48,5 +56,9 @@ public class UIManager : MonoBehaviour
         {
 
         }
+
     }
+    
 }
+
+
