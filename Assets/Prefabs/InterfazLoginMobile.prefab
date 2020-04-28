@@ -956,8 +956,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8422275540949488463}
   m_TextComponent: {fileID: 1324497715497301257}
   m_Placeholder: {fileID: 973063007306647863}
-  m_ContentType: 0
-  m_InputType: 0
+  m_ContentType: 7
+  m_InputType: 2
   m_AsteriskChar: 42
   m_KeyboardType: 0
   m_LineType: 0
@@ -1132,7 +1132,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7122825923908778284}
-  - component: {fileID: 906531671911145469}
   - component: {fileID: 7723631304263826264}
   - component: {fileID: 4767483118253514259}
   - component: {fileID: 2115526929540650432}
@@ -1163,20 +1162,6 @@ RectTransform:
   m_AnchoredPosition: {x: 2, y: -143}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &906531671911145469
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8281233718861916840}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b3ddabb2e8ce7042936ee09f5222e90, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nombreUsuario: {fileID: 1114379162933394043}
-  texto: {fileID: 1114379163663234165}
 --- !u!222 &7723631304263826264
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1256,7 +1241,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 906531671911145469}
+      - m_Target: {fileID: 0}
         m_MethodName: ObtencionNombre
         m_Mode: 1
         m_Arguments:
