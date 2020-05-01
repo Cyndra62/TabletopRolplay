@@ -21,16 +21,24 @@ public class UIManager : MonoBehaviour
     public GameObject UILogin;
     public InputField UsuarioLogin;
     public InputField PassLogin;
+    TcpClient client = new TcpClient("81.39.109.215", 13000);
 
     void Start()
     {
-        
+        //No poner Reader
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        //No poner Reader
+    }
+
+    public int RollDice(int atributo,int habilidad)
+    {
+        int resultado=0;
+        resultado = Random.Range(1, 20) + atributo + habilidad;
+        return resultado;
     }
     public void ButtonToRegistro()
     {
@@ -45,7 +53,9 @@ public class UIManager : MonoBehaviour
     }
     public void ButtonConfirmLogin()
     {
-        TcpClient client = new TcpClient("81.39.109.215", 13000);
+        StreamReader sReader = new StreamReader(client.GetStream(), Encoding.ASCII);
+        Debug.Log(sReader.ReadLine());
+
         StreamWriter sWriter = new StreamWriter(client.GetStream(), Encoding.ASCII);
         sWriter.WriteLine("{'nombre':'wololo', 'apellido':'wololo'}" );
         sWriter.Flush();
