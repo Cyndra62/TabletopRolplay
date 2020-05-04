@@ -696,6 +696,30 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 819268743}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &819268746 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8983767447991087410, guid: 2237d95d50d47f7428123cea0d4b5cb4,
+    type: 3}
+  m_PrefabInstance: {fileID: 819268743}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d199490a83bb2b844b9695cbf13b01ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &819268747 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1114379162933394043, guid: 2237d95d50d47f7428123cea0d4b5cb4,
+    type: 3}
+  m_PrefabInstance: {fileID: 819268743}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d199490a83bb2b844b9695cbf13b01ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &1439612715 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8236706531927905975, guid: f904c8dde438b3048b1d9dd11c911fd7,
@@ -821,8 +845,8 @@ MonoBehaviour:
   PassRegistro: {fileID: 8236706531202918815}
   ConfPassRegistro: {fileID: 8236706531202918814}
   UILogin: {fileID: 819268745}
-  UsuarioLogin: {fileID: 0}
-  PassLogin: {fileID: 0}
+  UsuarioLogin: {fileID: 819268747}
+  PassLogin: {fileID: 819268746}
 --- !u!1001 &8236706531202918812
 PrefabInstance:
   m_ObjectHideFlags: 0
