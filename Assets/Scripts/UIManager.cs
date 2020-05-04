@@ -11,6 +11,7 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     // Start is called before the first frame update
+    public SenderReciever senderReciever;
     [Header("Registro")]
     public GameObject UIRegistro;
     public InputField CorreoRegistro;
@@ -21,11 +22,13 @@ public class UIManager : MonoBehaviour
     public GameObject UILogin;
     public InputField UsuarioLogin;
     public InputField PassLogin;
-    TcpClient client = new TcpClient("81.39.109.215", 13000);
+    /*TcpClient client = new TcpClient("81.39.109.215", 13000);*/
 
     void Start()
     {
         //No poner Reader
+        senderReciever = new SenderReciever();
+        senderReciever.Launch();
     }
 
     // Update is called once per frame
@@ -53,12 +56,12 @@ public class UIManager : MonoBehaviour
     }
     public void ButtonConfirmLogin()
     {
-        StreamReader sReader = new StreamReader(client.GetStream(), Encoding.ASCII);
+        /*StreamReader sReader = new StreamReader(client.GetStream(), Encoding.ASCII);
         Debug.Log(sReader.ReadLine());
 
         StreamWriter sWriter = new StreamWriter(client.GetStream(), Encoding.ASCII);
         sWriter.WriteLine("{'nombre':'wololo', 'apellido':'wololo'}" );
-        sWriter.Flush();
+        sWriter.Flush();*/
     }
     public void ButtonConfirmRegister()
     {
