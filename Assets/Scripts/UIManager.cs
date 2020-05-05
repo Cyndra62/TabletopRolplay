@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,12 +23,38 @@ public class UIManager : MonoBehaviour
     public InputField UsuarioLogin;
     public InputField PassLogin;
     //TcpClient client = new TcpClient("81.39.109.215", 13000);
+    [Header("Instancias Clases")]
+    public FichaPJScript fichaPJ;
+    public SenderReceiver senderReceiver;
+
+    public Thread listener;
 
     void Start()
     {
-        //No poner Reader
+        listener = new Thread(receive);
+        listener.Start();
+    }
+    #region RECEIVER    
+    public void receive()
+    {
+        string str = "accede";
+        while (senderReceiver.isConnected() && senderReceiver.getIsRunning())
+        {
+            try
+            {
+                str = senderReceiver.sr.ReadLine();
+
+            }
+            catch (IOException ex)
+            {
+                Debug.Log(ex.Message);
+                senderReceiver.stopConnection();
+            }
+            finally { }
+        }
     }
 
+    #endregion
     // Update is called once per frame
     void Update()
     {
@@ -68,6 +95,7 @@ public class UIManager : MonoBehaviour
         }
 
     }
+    
     
 }
 

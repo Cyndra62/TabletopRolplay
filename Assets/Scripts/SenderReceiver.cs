@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-public class SenderReciever : MonoBehaviour
+public class SenderReceiver : MonoBehaviour
 {
     private const int portNum = 13000;
     public TcpClient client;
@@ -17,7 +17,11 @@ public class SenderReciever : MonoBehaviour
     public StreamReader sr;
     public volatile bool isRunning;
 
-    public SenderReciever()
+    private void Start()
+    {
+        DontDestroyOnLoad(this.gameObject);
+    }
+    public SenderReceiver()
     {
         
     }
@@ -30,8 +34,8 @@ public class SenderReciever : MonoBehaviour
 
         setIsRunning(true);
 
-        listener = new Thread(receive);
-        listener.Start();
+        /*listener = new Thread(receive);
+        listener.Start();*/
     }
 
     public void setIsRunning(bool running)
@@ -142,10 +146,14 @@ public class SenderReciever : MonoBehaviour
         else { return null; }
     }
 
-    /*public async Texture2D stringInput()
+    public Texture2D stringInput(string cadena)
     {
-
-    }*/
+        //Cuidado puede que falle por no ser Async
+        byte[] bytes = Convert.FromBase64String(cadena);
+        Texture2D mytexture = new Texture2D(2, 2);
+        mytexture.LoadImage(bytes);
+        return mytexture;
+    }
 
 
 
