@@ -4,13 +4,16 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
+using System.Threading;
 using UnityEngine.UI;
-
-
+using System;
 
 public class UIManager : MonoBehaviour
 {
     // Start is called before the first frame update
+    
+    public SenderReceiver sender;
+    public Thread listener;
     [Header("Registro")]
     public GameObject UIRegistro;
     public InputField CorreoRegistro;
@@ -21,25 +24,46 @@ public class UIManager : MonoBehaviour
     public GameObject UILogin;
     public InputField UsuarioLogin;
     public InputField PassLogin;
-    //TcpClient client = new TcpClient("81.39.109.215", 13000);
+
+    TcpClient client;
 
     void Start()
     {
-        //No poner Reader
+        client = new TcpClient("81.39.109.215", 13000);
+        sender = new SenderReceiver(client);
+        listener = new Thread(receive);
+        listener.Start();
     }
-
-    // Update is called once per frame
-    void Update()
+    #region RECEIVER    
+    public void receive()
     {
-        //No poner Reader
+        string str = "accede";
+        while (/*sender.isConnected() && */sender.getIsRunning())
+        {
+            try
+            {
+                str = sender.sr.ReadLine();
+                Debug.Log(str);
+            }
+            catch (IOException ex)
+            {
+                Debug.Log(ex.Message);
+                
+            }
+            finally { }
+        }
+        //sender.stopConnection();
     }
+    #endregion
 
-    public int RollDice(int atributo,int habilidad)
+    
+
+    /*public int RollDice(int atributo,int habilidad)
     {
         int resultado=0;
         resultado = Random.Range(1, 20) + atributo + habilidad;
         return resultado;
-    }
+    }*/
     public void ButtonToRegistro()
     {
         UIRegistro.SetActive(true);
@@ -51,15 +75,21 @@ public class UIManager : MonoBehaviour
         UIRegistro.SetActive(false);
         UILogin.SetActive(true);
     }
+
     public void ButtonConfirmLogin()
     {
-        //StreamReader sReader = new StreamReader(client.GetStream(), Encoding.ASCII);
-       // Debug.Log(sReader.ReadLine());
+        Perfil perfil = new Perfil();
+        Carga carga = new Carga();
 
-        //StreamWriter sWriter = new StreamWriter(client.GetStream(), Encoding.ASCII);
-       // sWriter.WriteLine("{'nombre':'wololo', 'apellido':'wololo'}" );
-        // sWriter.Flush();
+        perfil.Nombre = UsuarioLogin.text;
+        perfil.Contrasena = PassLogin.text;
+
+        carga.peticion = "makeConnection";
+        carga.json =@"" + perfil.getAsJSON()+"";
+        sender.send(carga.getAsJSON());
+
     }
+
     public void ButtonConfirmRegister()
     {
         if (PassRegistro.text != "" && ConfPassRegistro.text !="" && PassRegistro.text == ConfPassRegistro.text)
@@ -70,5 +100,7 @@ public class UIManager : MonoBehaviour
     }
     
 }
+
+
 
 
