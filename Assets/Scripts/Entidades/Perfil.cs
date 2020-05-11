@@ -10,7 +10,7 @@ public class Perfil
     public int Id;
     public string Nombre;
     public string Correo;
-    public string Contrasena;
+    public string Contraseña;
     public string PerfilJSON;
 
     public Perfil()
@@ -18,7 +18,7 @@ public class Perfil
         Id = 0;
         Nombre = null;
         Correo = null;
-        Contrasena = null;
+        Contraseña = null;
         PerfilJSON = null;
     }
 
@@ -28,6 +28,7 @@ public class Perfil
         string json = JsonUtility.ToJson(this);
         Debug.Log(json);
         return json;
+        
         
     }
 

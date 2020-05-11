@@ -43,7 +43,7 @@ public class SenderReceiver
         
     }
 
-    public void receive()
+    /*public void receive()
     {
         string str = "accede";
         while(isConnected() && getIsRunning()){
@@ -57,7 +57,7 @@ public class SenderReceiver
             }
             finally { }
         }
-    }
+    }*/
     public void stopConnection()
     {
         lock (this)
