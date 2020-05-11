@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-public class SenderReciever : MonoBehaviour
+public class SenderReceiver
 {
     private const int portNum = 13000;
     public TcpClient client;
@@ -17,21 +17,22 @@ public class SenderReciever : MonoBehaviour
     public StreamReader sr;
     public volatile bool isRunning;
 
-    public SenderReciever()
+    public SenderReceiver(TcpClient client)
     {
-        
+        Lanzar(client);
     }
-    public void Launch()
+
+    public void Lanzar(TcpClient client)
     {
-        client = new TcpClient("81.39.109.215", portNum);
+
         ns = client.GetStream();
         sr = new StreamReader(ns, Encoding.UTF8);
         sw = new StreamWriter(ns, Encoding.UTF8);
 
         setIsRunning(true);
-
-        listener = new Thread(receive);
-        listener.Start();
+        Debug.Log("INICIADO");
+        /*listener = new Thread(receive);
+        listener.Start();*/
     }
 
     public void setIsRunning(bool running)
@@ -42,7 +43,7 @@ public class SenderReciever : MonoBehaviour
         
     }
 
-    public void receive()
+    /*public void receive()
     {
         string str = "accede";
         while(isConnected() && getIsRunning()){
@@ -56,7 +57,7 @@ public class SenderReciever : MonoBehaviour
             }
             finally { }
         }
-    }
+    }*/
     public void stopConnection()
     {
         lock (this)
@@ -142,10 +143,13 @@ public class SenderReciever : MonoBehaviour
         else { return null; }
     }
 
-    /*public async Texture2D stringInput()
+    public Texture2D stringToIMG(string cadena)
     {
-
-    }*/
+        byte[] bytes = Convert.FromBase64String(cadena);
+        Texture2D mytexture = new Texture2D(2, 2);
+        mytexture.LoadImage(bytes);
+        return mytexture;
+    }
 
 
 
