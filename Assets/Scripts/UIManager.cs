@@ -122,7 +122,7 @@ public class UIManager : MonoBehaviour
         carga.json = @"" + perfil.getAsJSON() + "";
         sender.send(carga.getAsJSON());
 
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(8);
         carga = Carga.getFromJSON(str);
         if (!carga.json.Equals("accepted"))
         {
@@ -149,7 +149,7 @@ public class UIManager : MonoBehaviour
         carga.json = @"" + perfil.getAsJSON() + "";
         sender.send(carga.getAsJSON());
 
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(8);
         carga = Carga.getFromJSON(str);
         if (string.IsNullOrEmpty(carga.json))
         {
