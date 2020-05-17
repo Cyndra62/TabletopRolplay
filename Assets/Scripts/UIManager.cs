@@ -24,7 +24,9 @@ public class UIManager : MonoBehaviour
     public GameObject UILogin;
     public InputField UsuarioLogin;
     public InputField PassLogin;
+    [Header("Warnings")]
     public GameObject loadingLogIn;
+    public GameObject connectionError;
     [Header("Menu")]
     public GameObject menu;
     public Text userNameMenu;
@@ -35,13 +37,19 @@ public class UIManager : MonoBehaviour
     Carga carga;
     void Start()
     {
-        perfil= new Perfil();
-        carga = new Carga();
-        client = new TcpClient("81.39.109.215", 13000);
-        sender = new SenderReceiver(client);
-        listener = new Thread(receive);
-        listener.Start();
-
+        try
+        {
+            perfil = new Perfil();
+            carga = new Carga();
+            client = new TcpClient("81.39.109.215", 13000);
+            sender = new SenderReceiver(client);
+            listener = new Thread(receive);
+            listener.Start();
+        }
+        catch(Exception ex) 
+        {
+            connectionError.SetActive(true);
+        }
     }
     #region RECEIVER    
     public void receive()
@@ -96,7 +104,7 @@ public class UIManager : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(PassRegistro.text) && !string.IsNullOrEmpty(ConfPassRegistro.text) && PassRegistro.text == ConfPassRegistro.text)
         {
-            StartCoroutine(Register());
+            StartCoroutine(Register());  
         }
 
     }
@@ -114,7 +122,7 @@ public class UIManager : MonoBehaviour
         carga.json = @"" + perfil.getAsJSON() + "";
         sender.send(carga.getAsJSON());
 
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(4);
         carga = Carga.getFromJSON(str);
         if (!carga.json.Equals("accepted"))
         {
@@ -141,7 +149,7 @@ public class UIManager : MonoBehaviour
         carga.json = @"" + perfil.getAsJSON() + "";
         sender.send(carga.getAsJSON());
 
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(4);
         carga = Carga.getFromJSON(str);
         if (string.IsNullOrEmpty(carga.json))
         {
@@ -157,6 +165,11 @@ public class UIManager : MonoBehaviour
             userNameMenu.text = perfil.Nombre;
         }
         
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 }
 
