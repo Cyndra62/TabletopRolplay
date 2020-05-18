@@ -10,37 +10,58 @@ using System;
 
 public class UIManager : MonoBehaviour
 {
+    private const int Seconds = 8;
+
     // Start is called before the first frame update
-    
+
     public SenderReceiver sender;
     public Thread listener;
+
     [Header("Registro")]
     public GameObject UIRegistro;
     public InputField CorreoRegistro;
     public InputField UsuarioRegistro;
     public InputField PassRegistro;
     public InputField ConfPassRegistro;
+
     [Header("Login")]
     public GameObject UILogin;
     public InputField UsuarioLogin;
     public InputField PassLogin;
+
     [Header("Warnings")]
     public GameObject loadingLogIn;
     public GameObject connectionError;
+
     [Header("Menu")]
     public GameObject menu;
     public Text userNameMenu;
+
+    [Header("Ajustes")]
+    public GameObject ajustes;
+    public InputField cambioNombre;
+    public GameObject confirmacion;
+
+    [Header("Campaña")]
+    public GameObject campaña;
+    
+    [Header("CrearCampaña")]
+    public GameObject crearCampaña;
+    public InputField nombreCampaña;
+    public Dropdown juego;
 
     TcpClient client;
     string str;
     Perfil perfil;
     Carga carga;
+    PerfilData perfilData;
     void Start()
     {
         try
         {
             perfil = new Perfil();
             carga = new Carga();
+            perfilData = new PerfilData();
             client = new TcpClient("81.39.109.215", 13000);
             sender = new SenderReceiver(client);
             listener = new Thread(receive);
@@ -122,7 +143,7 @@ public class UIManager : MonoBehaviour
         carga.json = @"" + perfil.getAsJSON() + "";
         sender.send(carga.getAsJSON());
 
-        yield return new WaitForSeconds(8);
+        yield return new WaitForSeconds(Seconds);
         carga = Carga.getFromJSON(str);
         if (!carga.json.Equals("accepted"))
         {
@@ -149,9 +170,9 @@ public class UIManager : MonoBehaviour
         carga.json = @"" + perfil.getAsJSON() + "";
         sender.send(carga.getAsJSON());
 
-        yield return new WaitForSeconds(8);
+        yield return new WaitForSeconds(Seconds);
         carga = Carga.getFromJSON(str);
-        if (string.IsNullOrEmpty(carga.json))
+        if (string.IsNullOrEmpty(carga.json)||carga.json.Equals("denied"))
         {
             loadingLogIn.SetActive(false);
         }
@@ -169,7 +190,117 @@ public class UIManager : MonoBehaviour
 
     public void ExitGame()
     {
+#if UNITY_EDITOR     
+        try
+        {
+            client.GetStream().Close();
+            client.Close();
+            UnityEditor.EditorApplication.isPlaying = false;
+        }
+        catch (Exception ex) { }
+#else      
+        client.GetStream().Close();
+        client.Close();
         Application.Quit();
+#endif
+    }
+
+    public void toAjustes()
+    {
+        menu.gameObject.SetActive(false);
+        ajustes.gameObject.SetActive(true);
+
+    }
+
+    public void toCrearCampaña()
+    {
+        menu.gameObject.SetActive(false);
+        crearCampaña.gameObject.SetActive(true);
+    }
+    public void toCampaña()
+    {
+        menu.gameObject.SetActive(false);
+        campaña.gameObject.SetActive(true);
+
+    }
+    public void backToMenu()
+    {
+        campaña.gameObject.SetActive(false);
+        crearCampaña.gameObject.SetActive(false);
+        ajustes.gameObject.SetActive(false);
+        menu.gameObject.SetActive(true);
+    }
+
+    public void ajustesActivarPopUp()
+    {
+        confirmacion.SetActive(true);
+    }
+    public void ajustesDesactivarPoPUp()
+    {
+        confirmacion.SetActive(false);
+    }
+
+    public void ajustesCambiarNombre()
+    {
+        if (!String.IsNullOrEmpty(cambioNombre.text))
+        {
+            StartCoroutine(ModificarNombre());
+        }
+    }
+
+    IEnumerator ModificarNombre()
+    {
+        loadingLogIn.SetActive(true);
+
+
+        perfil.Nombre = cambioNombre.text;
+
+
+        carga.peticion = "updateProfile";
+        carga.json = @"" + perfil.getAsJSON() + "";
+        sender.send(carga.getAsJSON());
+
+        yield return new WaitForSeconds(Seconds);
+        carga = Carga.getFromJSON(str);
+        if (!carga.json.Equals("accepted"))
+        {
+            loadingLogIn.SetActive(false);
+        }
+        else
+        {
+            loadingLogIn.SetActive(false);
+            ajustes.SetActive(false);
+            menu.SetActive(true);
+            userNameMenu.text = perfil.Nombre;
+        }
+    }
+
+
+    public void eliminarPerfil()
+    {
+        StartCoroutine(BorrarPerfil());
+    }
+    IEnumerator BorrarPerfil()
+    {
+        loadingLogIn.SetActive(true);
+
+        carga.peticion = "deleteProfile";
+        carga.json = @"" + perfil.getAsJSON() + "";
+        sender.send(carga.getAsJSON());
+
+        yield return new WaitForSeconds(Seconds);
+        carga = Carga.getFromJSON(str);
+        if (!carga.json.Equals("accepted"))
+        {
+            loadingLogIn.SetActive(false);
+        }
+        else
+        {
+            loadingLogIn.SetActive(false);
+            ajustes.SetActive(false);
+            UILogin.SetActive(true);
+            
+        }
     }
 }
 
