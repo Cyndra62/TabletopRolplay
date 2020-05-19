@@ -12,7 +12,12 @@ public class Campaña
     public int DM;
     public string CampañaJSON;
 
-
+    public string getAsJSON()
+    {
+        string json = JsonUtility.ToJson(this);
+        Debug.Log(json);
+        return json;
+    }
     public Campaña()
     {
         Nombre = null;

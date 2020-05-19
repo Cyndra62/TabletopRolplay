@@ -36,6 +36,8 @@ public class UIManager : MonoBehaviour
     [Header("Menu")]
     public GameObject menu;
     public Text userNameMenu;
+    public Text botonCampañaTexto;
+    public List<GameObject> botonesCampañas;
 
     [Header("Ajustes")]
     public GameObject ajustes;
@@ -43,7 +45,7 @@ public class UIManager : MonoBehaviour
     public GameObject confirmacion;
 
     [Header("Campaña")]
-    public GameObject campaña;
+    public GameObject UICampaña;
     
     [Header("CrearCampaña")]
     public GameObject crearCampaña;
@@ -55,6 +57,7 @@ public class UIManager : MonoBehaviour
     Perfil perfil;
     Carga carga;
     PerfilData perfilData;
+    Campaña campaña;
     void Start()
     {
         try
@@ -62,6 +65,7 @@ public class UIManager : MonoBehaviour
             perfil = new Perfil();
             carga = new Carga();
             perfilData = new PerfilData();
+            campaña = new Campaña();
             client = new TcpClient("81.39.109.215", 13000);
             sender = new SenderReceiver(client);
             listener = new Thread(receive);
@@ -179,7 +183,15 @@ public class UIManager : MonoBehaviour
         else
         {
             perfil = Perfil.getFromJson(carga.json);
-            
+            perfilData = PerfilData.getFromJson(perfil.PerfilJSON);
+            if (perfilData.Campañas.Count == 0)
+            {
+                botonCampañaTexto.text = "Vacio";
+            }
+            else
+            {
+                botonCampañaTexto.text = perfilData.Campañas[0].Nombre;
+            }
             loadingLogIn.SetActive(false);
             UILogin.SetActive(false);
             menu.SetActive(true);
@@ -220,12 +232,12 @@ public class UIManager : MonoBehaviour
     public void toCampaña()
     {
         menu.gameObject.SetActive(false);
-        campaña.gameObject.SetActive(true);
+        UICampaña.gameObject.SetActive(true);
 
     }
     public void backToMenu()
     {
-        campaña.gameObject.SetActive(false);
+        UICampaña.gameObject.SetActive(false);
         crearCampaña.gameObject.SetActive(false);
         ajustes.gameObject.SetActive(false);
         menu.gameObject.SetActive(true);
@@ -300,6 +312,83 @@ public class UIManager : MonoBehaviour
             ajustes.SetActive(false);
             UILogin.SetActive(true);
             
+        }
+    }
+
+    public void guardarCampaña()
+    {
+        Debug.Log("Entra");
+        campaña.Nombre = nombreCampaña.text;
+        if(juego.value == 1)
+        {
+            campaña.Juego = "The Awakens";
+            Debug.Log("Pone The Awakens");
+        }
+        else if(juego.value == 2)
+        {
+            campaña.Juego = "Dungeons & Dragons";
+            Debug.Log("Pone D&D");
+        }
+        campaña.DM = perfil.Id;
+        Debug.Log(campaña.DM);
+        StartCoroutine(enviarCampaña());
+
+    }
+
+    IEnumerator enviarCampaña()
+    {
+        loadingLogIn.SetActive(true);
+
+        carga.peticion = "createCampaña";
+        carga.json = @"" + campaña.getAsJSON() + "";
+        Debug.Log(carga.json);
+        sender.send(carga.getAsJSON());
+        
+        yield return new WaitForSeconds(Seconds);
+        carga = Carga.getFromJSON(str);
+        if (!carga.json.Equals("accepted"))
+        {
+            loadingLogIn.SetActive(false);
+        }
+        else
+        {
+            loadingLogIn.SetActive(false);
+            crearCampaña.SetActive(false);
+            botonCampañaTexto.text = campaña.Nombre;
+            menu.SetActive(true);
+
+        }
+    }
+
+    public void DeleteCampaña()
+    {
+        if(perfil.Id == perfilData.Campañas[0].DM)
+        {
+            StartCoroutine(borrarCampaña());
+        }
+    }
+
+    IEnumerator borrarCampaña()
+    {
+        loadingLogIn.SetActive(true);
+
+        carga.peticion = "deleteCampaña";
+        carga.json = @"" + perfilData.Campañas[0].getAsJSON() + "";
+        Debug.Log(carga.json);
+        sender.send(carga.getAsJSON());
+
+        yield return new WaitForSeconds(Seconds);
+        carga = Carga.getFromJSON(str);
+        if (!carga.json.Equals("accepted"))
+        {
+            loadingLogIn.SetActive(false);
+        }
+        else
+        {
+            loadingLogIn.SetActive(false);
+            perfilData.Campañas.Remove(perfilData.Campañas[0]);
+            botonCampañaTexto.text = "vacio";
+
         }
     }
 }

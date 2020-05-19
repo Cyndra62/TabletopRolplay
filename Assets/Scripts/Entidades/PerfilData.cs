@@ -23,4 +23,9 @@ public class PerfilData
         Debug.Log(json);
         return json;
     }
+
+    public static PerfilData getFromJson(string PerfilJSON)
+    {
+        return JsonUtility.FromJson<PerfilData>(PerfilJSON);
+    }
 }
