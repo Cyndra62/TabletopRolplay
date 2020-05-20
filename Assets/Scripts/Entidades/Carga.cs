@@ -16,7 +16,7 @@ public class Carga
         cuenta = null;
         peticion = null;
         json = null;
-        assigned = null;
+        assigned = "false";
     }
     
     public string getJSON()

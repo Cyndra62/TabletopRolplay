@@ -26,4 +26,11 @@ public class Campaña
         DM = 0;
         CampañaJSON = null;
     }
+
+    public static Campaña getFromJson(string campañaJSON)
+    {
+        return JsonUtility.FromJson<Campaña>(campañaJSON);
+    }
+
+
 }

@@ -58,6 +58,7 @@ public class UIManager : MonoBehaviour
     Carga carga;
     PerfilData perfilData;
     Campaña campaña;
+    CampañaData campañaData;
     void Start()
     {
         try
@@ -66,6 +67,7 @@ public class UIManager : MonoBehaviour
             carga = new Carga();
             perfilData = new PerfilData();
             campaña = new Campaña();
+            campañaData = new CampañaData();
             client = new TcpClient("81.39.109.215", 13000);
             sender = new SenderReceiver(client);
             listener = new Thread(receive);
@@ -388,6 +390,99 @@ public class UIManager : MonoBehaviour
             loadingLogIn.SetActive(false);
             perfilData.Campañas.Remove(perfilData.Campañas[0]);
             botonCampañaTexto.text = "vacio";
+
+        }
+    }
+
+    public void enviarMensaje()
+    {
+        StartCoroutine(sendMessage());
+    }
+
+    IEnumerator sendMessage()
+    {
+        loadingLogIn.SetActive(true);
+
+        carga.peticion = "sendNotificacion";
+        carga.json ="Patata Dios";
+        Debug.Log(carga.json);
+        sender.send(carga.getAsJSON());
+
+        yield return new WaitForSeconds(Seconds);
+        carga = Carga.getFromJSON(str);
+        if (!carga.json.Equals("accepted"))
+        {
+            loadingLogIn.SetActive(false);
+        }
+        else
+        {
+            loadingLogIn.SetActive(false);
+        }
+    }
+
+    public void unirseCampaña()
+    {
+        StartCoroutine(joinCampaña());
+    }
+
+    IEnumerator joinCampaña()
+    {
+        loadingLogIn.SetActive(true);
+
+        carga.peticion = "joinCampaña";
+        carga.json = perfilData.Campañas[0].getAsJSON();
+        Debug.Log(carga.json);
+        sender.send(carga.getAsJSON());
+
+        yield return new WaitForSeconds(Seconds);
+        carga = Carga.getFromJSON(str);
+        if (carga.assigned.Equals("false")||carga.json.Equals("denied"))
+        {
+            loadingLogIn.SetActive(false);
+        }
+        else
+        {
+            campaña = Campaña.getFromJson(carga.json);
+            campañaData = CampañaData.getFromJson(campaña.CampañaJSON);
+            loadingLogIn.SetActive(false);
+            menu.SetActive(false);
+            UICampaña.SetActive(true);
+            
+        }
+    }
+
+    public void salirCampaña()
+    {
+        StartCoroutine(leaveCampaña());
+    }
+
+    IEnumerator leaveCampaña()
+    {
+        loadingLogIn.SetActive(true);
+
+        carga.peticion = "leaveCampaña";
+        carga.json = perfil.Id.ToString();
+        Debug.Log(carga.json);
+        sender.send(carga.getAsJSON());
+
+        yield return new WaitForSeconds(Seconds);
+        try
+        {
+            carga = Carga.getFromJSON(str);
+        }
+        catch(Exception ex)
+        {
+            Debug.Log(ex);
+        }
+        if (carga.json.Equals("denied"))
+        {
+            loadingLogIn.SetActive(false);
+        }
+        else
+        {
+            loadingLogIn.SetActive(false);
+            menu.SetActive(true);
+            UICampaña.SetActive(false);
 
         }
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FichaPJScript : MonoBehaviour
+public class FichaPJScript:MonoBehaviour
 {
     [Header("Vistas")]
     public GameObject vistaAtributos;
