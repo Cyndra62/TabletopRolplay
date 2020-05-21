@@ -6,9 +6,9 @@ using UnityEngine;
 [Serializable]
 public class CampañaData
 {
-    List<Token> TokensPlayer;
-    List<string> ImagenesMapas;
-    List<Token> TokensNPC;
+    public List<Token> TokensPlayer;
+    public List<string> ImagenesMapas;
+    public List<Token> TokensNPC;
 
     public CampañaData()
     {

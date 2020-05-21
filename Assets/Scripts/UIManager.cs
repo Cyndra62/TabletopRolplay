@@ -7,6 +7,8 @@ using UnityEngine;
 using System.Threading;
 using UnityEngine.UI;
 using System;
+using System.Linq.Expressions;
+using System.Security.Cryptography;
 
 public class UIManager : MonoBehaviour
 {
@@ -38,6 +40,67 @@ public class UIManager : MonoBehaviour
     public Text userNameMenu;
     public Text botonCampañaTexto;
     public List<GameObject> botonesCampañas;
+    public Text botonPersonajeTexto;
+
+    [Header("Fichas")]
+    public GameObject crearPersonajes;
+    [Header("VistasFichas")]
+    public GameObject vistaAtributos;
+    public GameObject vistaHabilidades;
+    public GameObject vistaProfesiones;
+    public GameObject vistaRecursos;
+    public GameObject vistaFacultades;
+    [Header("Datos Personales fichas")]
+    public InputField nombre;
+    public Dropdown sexo;
+    public Dropdown raza;
+    public InputField Edad;
+    public InputField Profesion;
+    [Header("Atributos fichas")]
+    public InputField fuerza;
+    public InputField carisma;
+    public InputField percepcion;
+    public InputField destreza;
+    public InputField manipulacion;
+    public InputField astucia;
+    public InputField resistencia;
+    public InputField apariencia;
+    public InputField inteligencia;
+    [Header("Habilidades fichas")]
+    public InputField alerta;
+    public InputField apanar;
+    public InputField pelea;
+    public InputField armasDistancia;
+    public InputField montar;
+    public InputField atletismo;
+    public InputField expresion;
+    public InputField armasMelee;
+    public InputField empatia;
+    public InputField intimidacion;
+    public InputField sigilo;
+    public InputField delincuencia;
+    public InputField interpretacion;
+    public InputField subterfugio;
+    public InputField instinto;
+    public InputField supervivencia;
+    [Header("Profesiones fichas")]
+    public InputField herreria;
+    public InputField caza;
+    public InputField sastreria;
+    public InputField militar;
+    public InputField cocina;
+    public InputField medicina;
+    public InputField geografia;
+    public InputField ciencias;
+    [Header("Recursos fichas")]
+    public InputField vida;
+    public InputField energia;
+    public InputField hambre;
+    public InputField fama;
+    public InputField experiencia;
+    public InputField nivel;
+    public InputField puntosDeMejora;
+    
 
     [Header("Ajustes")]
     public GameObject ajustes;
@@ -59,6 +122,8 @@ public class UIManager : MonoBehaviour
     PerfilData perfilData;
     Campaña campaña;
     CampañaData campañaData;
+    Personaje personaje;
+    Jugador jugador;
     void Start()
     {
         try
@@ -71,6 +136,8 @@ public class UIManager : MonoBehaviour
             client = new TcpClient("81.39.109.215", 13000);
             sender = new SenderReceiver(client);
             listener = new Thread(receive);
+            jugador = new Jugador();
+            personaje = new Personaje();
             listener.Start();
         }
         catch(Exception ex) 
@@ -194,6 +261,16 @@ public class UIManager : MonoBehaviour
             {
                 botonCampañaTexto.text = perfilData.Campañas[0].Nombre;
             }
+            if (perfilData.Jugadores.Count == 0)
+            {
+                botonPersonajeTexto.text = "Vacio";
+            }
+            else
+            {
+                botonPersonajeTexto.text = perfilData.Jugadores[0].Nombre;
+                personaje = perfilData.Jugadores[0].getPersonaje();
+            }
+            
             loadingLogIn.SetActive(false);
             UILogin.SetActive(false);
             menu.SetActive(true);
@@ -486,6 +563,303 @@ public class UIManager : MonoBehaviour
 
         }
     }
+
+    public void toCrearPersonaje()
+    {
+        carga.peticion = "createCharacter";
+        nombre.interactable = true;
+        crearPersonajes.SetActive(true);
+        menu.SetActive(false);
+    }
+    public void changeAtributos()
+    {
+        vistaAtributos.SetActive(true);
+        vistaHabilidades.SetActive(false);
+        vistaProfesiones.SetActive(false);
+        vistaRecursos.SetActive(false);
+        vistaFacultades.SetActive(false);
+    }
+    public void changeHabilidades()
+    {
+        vistaAtributos.SetActive(false);
+        vistaHabilidades.SetActive(true);
+        vistaProfesiones.SetActive(false);
+        vistaRecursos.SetActive(false);
+        vistaFacultades.SetActive(false);
+    }
+    public void changeProfesiones()
+    {
+        vistaAtributos.SetActive(false);
+        vistaHabilidades.SetActive(false);
+        vistaProfesiones.SetActive(true);
+        vistaRecursos.SetActive(false);
+        vistaFacultades.SetActive(false);
+    }
+    public void changeRecursos()
+    {
+        vistaAtributos.SetActive(false);
+        vistaHabilidades.SetActive(false);
+        vistaProfesiones.SetActive(false);
+        vistaRecursos.SetActive(true);
+        vistaFacultades.SetActive(false);
+    }
+    public void changeFacultades()
+    {
+        vistaAtributos.SetActive(false);
+        vistaHabilidades.SetActive(false);
+        vistaProfesiones.SetActive(false);
+        vistaRecursos.SetActive(false);
+        vistaFacultades.SetActive(true);
+    }
+
+    public void salvarDatosPj()
+    {
+        personaje.nombre = nombre.text;
+        if (sexo.value == 1)
+        {
+            personaje.sexo = "Masculino";
+        }
+        else
+        {
+            personaje.sexo = "Femenino";
+        }
+
+        switch (raza.value)
+        {
+            case 1:
+                personaje.raza = "Precursor";
+                break;
+            case 2:
+                personaje.raza = "Leonico";
+                break;
+            case 3:
+                personaje.raza = "Ursido";
+                break;
+            case 4:
+                personaje.raza = "Miatta";
+                break;
+            case 5:
+                personaje.raza = "Konigder";
+                break;
+            case 6:
+                personaje.raza = "Lupxano";
+                break;
+        }
+        int.TryParse(Edad.text, out personaje.edad);
+        personaje.profesion = Profesion.text;
+        int.TryParse(fuerza.text, out personaje.fuerza);
+        int.TryParse(carisma.text, out personaje.carisma);
+        int.TryParse(percepcion.text, out personaje.percepcion);
+        int.TryParse(destreza.text, out personaje.destreza);
+        int.TryParse(manipulacion.text, out personaje.manipulacion);
+        int.TryParse(astucia.text, out personaje.astucia);
+        int.TryParse(resistencia.text, out personaje.resistencia);
+        int.TryParse(apariencia.text, out personaje.apariencia);
+        int.TryParse(inteligencia.text, out personaje.inteligencia);
+
+        int.TryParse(alerta.text, out personaje.alerta);
+        int.TryParse(apanar.text, out personaje.apañar);
+        int.TryParse(pelea.text, out personaje.pelea);
+        int.TryParse(armasDistancia.text, out personaje.armasDistancia);
+        int.TryParse(montar.text, out personaje.montar);
+        int.TryParse(atletismo.text, out personaje.atletismo);
+        int.TryParse(expresion.text, out personaje.expresion);
+        int.TryParse(armasMelee.text, out personaje.armasMelee);
+        int.TryParse(empatia.text, out personaje.empatia);
+        int.TryParse(intimidacion.text, out personaje.intimidacion);
+        int.TryParse(sigilo.text, out personaje.sigilo);
+        int.TryParse(delincuencia.text, out personaje.delincuencia);
+        int.TryParse(interpretacion.text, out personaje.interpretacion);
+        int.TryParse(subterfugio.text, out personaje.subterfugio);
+        int.TryParse(instinto.text, out personaje.instinto);
+        int.TryParse(supervivencia.text, out personaje.supervivencia);
+
+        int.TryParse(herreria.text, out personaje.herreria);
+        int.TryParse(caza.text, out personaje.caza);
+        int.TryParse(sastreria.text, out personaje.sastreria);
+        int.TryParse(militar.text, out personaje.militar);
+        int.TryParse(cocina.text, out personaje.cocina);
+        int.TryParse(medicina.text, out personaje.medicina);
+        int.TryParse(geografia.text, out personaje.geografia);
+        int.TryParse(ciencias.text, out personaje.ciencias);
+
+        int.TryParse(vida.text, out personaje.vida);
+        int.TryParse(energia.text, out personaje.energia);
+        int.TryParse(hambre.text, out personaje.hambre);
+        int.TryParse(fama.text, out personaje.fama);
+        int.TryParse(experiencia.text, out personaje.experiencia);
+        int.TryParse(nivel.text, out personaje.nivel);
+        int.TryParse(puntosDeMejora.text, out personaje.puntosDeMejora);
+
+        jugador.Nombre = nombre.text;
+        jugador.Perfil = perfil.Id;
+        jugador.Campaña = perfilData.Campañas[0].Id;
+        jugador.JugadorJSON = personaje.getAsJSON();
+    }
+    public void guardarFicha()
+    {
+        salvarDatosPj();
+        StartCoroutine(enviarJugador());
+    }
+
+    IEnumerator enviarJugador()
+    {
+        loadingLogIn.SetActive(true);
+
+        carga.json = jugador.getAsJSON();
+        Debug.Log(carga.json);
+        sender.send(carga.getAsJSON());
+
+        yield return new WaitForSeconds(Seconds);
+        try
+        {
+            carga = Carga.getFromJSON(str);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex);
+        }
+        if (carga.json.Equals("denied"))
+        {
+            loadingLogIn.SetActive(false);
+        }
+        else
+        {
+            loadingLogIn.SetActive(false);
+            menu.SetActive(true);
+            crearPersonajes.SetActive(false);
+
+        }
+    }
+
+    public void verPersonaje()
+    {
+        carga.peticion = "updateCharacter";
+        nombre.interactable = false;
+        nombre.text = personaje.nombre;
+        switch (personaje.raza)
+        {
+            case "Precursor":
+                raza.value = 1;
+                break;
+            case "Leonico":
+                raza.value = 2;
+                break;
+            case "Ursido":
+                raza.value = 3;
+                break;
+            case "Miatta":
+                raza.value = 4;
+                break;
+            case "Konigder":
+                raza.value = 5;
+                break;
+            case "Lupxano":
+                raza.value = 6;
+                break;
+        }
+        switch (personaje.sexo)
+        {
+            case "Masculino":
+                sexo.value = 1;
+                break;
+            case "Femenino":
+                sexo.value = 2;
+                break;
+        }
+        Edad.text = personaje.edad.ToString();
+        Profesion.text = personaje.profesion;
+
+        fuerza.text = personaje.fuerza.ToString();
+        carisma.text = personaje.carisma.ToString();
+        percepcion.text = personaje.percepcion.ToString();
+        destreza.text = personaje.destreza.ToString();
+        manipulacion.text = personaje.manipulacion.ToString();
+        astucia.text = personaje.astucia.ToString();
+        resistencia.text = personaje.resistencia.ToString();
+        apariencia.text = personaje.apariencia.ToString();
+        inteligencia.text = personaje.inteligencia.ToString();
+
+        alerta.text = personaje.alerta.ToString();
+        apanar.text = personaje.apañar.ToString();
+        pelea.text = personaje.pelea.ToString();
+        armasDistancia.text = personaje.armasDistancia.ToString();
+        atletismo.text = personaje.atletismo.ToString();
+        montar.text = personaje.montar.ToString();
+        expresion.text = personaje.expresion.ToString();
+        armasMelee.text = personaje.armasMelee.ToString();
+        empatia.text = personaje.empatia.ToString();
+        intimidacion.text = personaje.intimidacion.ToString();
+        sigilo.text = personaje.sigilo.ToString();
+        delincuencia.text = personaje.delincuencia.ToString();
+        interpretacion.text = personaje.interpretacion.ToString();
+        subterfugio.text = personaje.subterfugio.ToString();
+        instinto.text = personaje.instinto.ToString();
+        supervivencia.text = personaje.supervivencia.ToString();
+
+        herreria.text = personaje.herreria.ToString();
+        caza.text = personaje.caza.ToString();
+        sastreria.text = personaje.sastreria.ToString();
+        militar.text = personaje.militar.ToString();
+        cocina.text = personaje.cocina.ToString();
+        medicina.text = personaje.medicina.ToString();
+        geografia.text = personaje.geografia.ToString();
+        ciencias.text = personaje.ciencias.ToString();
+
+        vida.text = personaje.vida.ToString();
+        energia.text = personaje.energia.ToString();
+        hambre.text = personaje.hambre.ToString();
+        fama.text = personaje.fama.ToString();
+        experiencia.text = personaje.experiencia.ToString();
+        nivel.text = personaje.nivel.ToString();
+        puntosDeMejora.text = personaje.puntosDeMejora.ToString();
+
+        crearPersonajes.SetActive(true);
+        menu.SetActive(false);
+    }
+    public void volverMenu()
+    {
+        menu.SetActive(true);
+        crearPersonajes.SetActive(false);
+    }
+
+    public void borrarPersonaje()
+    {
+        StartCoroutine(borrarJugador());
+    }
+    IEnumerator borrarJugador()
+    {
+        loadingLogIn.SetActive(true);
+        carga.peticion = "deleteCharacter";
+        carga.json = perfilData.Jugadores[0].getAsJSON();
+        Debug.Log(carga.json);
+        sender.send(carga.getAsJSON());
+
+        yield return new WaitForSeconds(Seconds);
+        try
+        {
+            carga = Carga.getFromJSON(str);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex);
+        }
+        if (carga.json.Equals("denied"))
+        {
+            loadingLogIn.SetActive(false);
+        }
+        else
+        {
+            loadingLogIn.SetActive(false);
+            menu.SetActive(true);
+            botonPersonajeTexto.text = "Vacio";
+            personaje = null;
+            personaje = new Personaje();
+            crearPersonajes.SetActive(false);
+
+        }
+    }
+
 }
 
 

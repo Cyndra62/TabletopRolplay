@@ -6,11 +6,11 @@ using UnityEngine;
 [Serializable]
 public class Token
 {
-    string Img;
-    int X;
-    int Y;
-    string Perfil;
-    string IsNPC;
+    public string Img;
+    public int X;
+    public int Y;
+    public string Perfil;
+    public string IsNPC;
 
     public Token()
     {
