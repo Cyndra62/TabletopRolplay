@@ -109,6 +109,11 @@ public class UIManager : MonoBehaviour
 
     [Header("Campaña")]
     public GameObject UICampaña;
+    public GameObject PopUpUsuario;
+    public InputField invitaUsuario;
+    public GameObject chatBoxContent;
+    public Text Message;
+    public InputField mensajeAEnviar;
     
     [Header("CrearCampaña")]
     public GameObject crearCampaña;
@@ -116,13 +121,14 @@ public class UIManager : MonoBehaviour
     public Dropdown juego;
 
     TcpClient client;
-    string str;
+    string str = "accede";
     Perfil perfil;
     Carga carga;
     PerfilData perfilData;
     Campaña campaña;
     CampañaData campañaData;
     Personaje personaje;
+    Mensaje mensaje;
     Jugador jugador;
     void Start()
     {
@@ -133,10 +139,11 @@ public class UIManager : MonoBehaviour
             perfilData = new PerfilData();
             campaña = new Campaña();
             campañaData = new CampañaData();
-            client = new TcpClient("81.39.109.215", 13000);
+            client = new TcpClient("79.152.249.254", 13000);
             sender = new SenderReceiver(client);
             listener = new Thread(receive);
             jugador = new Jugador();
+            mensaje = new Mensaje();
             personaje = new Personaje();
             listener.Start();
         }
@@ -144,6 +151,11 @@ public class UIManager : MonoBehaviour
         {
             connectionError.SetActive(true);
         }
+    }
+    public void Update()
+    {
+        ProcessData();
+        
     }
     #region RECEIVER    
     public void receive()
@@ -155,6 +167,7 @@ public class UIManager : MonoBehaviour
             {
                 str = sender.sr.ReadLine();
                 Debug.Log(str);
+                
             }
             catch (IOException ex)
             {
@@ -169,12 +182,12 @@ public class UIManager : MonoBehaviour
 
     
 
-    /*public int RollDice(int atributo,int habilidad)
+    public int RollDice(int atributo,int habilidad)
     {
         int resultado=0;
-        resultado = Random.Range(1, 20) + atributo + habilidad;
+        resultado = UnityEngine.Random.Range(1, 20) + atributo + habilidad;
         return resultado;
-    }*/
+    }
     public void ButtonToRegistro()
     {
         UIRegistro.SetActive(true);
@@ -473,29 +486,18 @@ public class UIManager : MonoBehaviour
 
     public void enviarMensaje()
     {
-        StartCoroutine(sendMessage());
-    }
 
-    IEnumerator sendMessage()
-    {
-        loadingLogIn.SetActive(true);
-
-        carga.peticion = "sendNotificacion";
-        carga.json ="Patata Dios";
+        carga.peticion = "chatMessage";
+        carga.assigned = "true";
+        mensaje.Emisor = perfil.Nombre;
+        mensaje.Messaje = mensajeAEnviar.text;
+        carga.json = mensaje.getAsJSON();
         Debug.Log(carga.json);
         sender.send(carga.getAsJSON());
 
-        yield return new WaitForSeconds(Seconds);
-        carga = Carga.getFromJSON(str);
-        if (!carga.json.Equals("accepted"))
-        {
-            loadingLogIn.SetActive(false);
-        }
-        else
-        {
-            loadingLogIn.SetActive(false);
-        }
     }
+
+
 
     public void unirseCampaña()
     {
@@ -858,6 +860,71 @@ public class UIManager : MonoBehaviour
             crearPersonajes.SetActive(false);
 
         }
+    }
+
+    public void ProcessData()
+    {
+        if (!String.Equals(str, "accede"))
+        {
+            Carga Aux = new Carga();
+            Aux = Carga.getFromJSON(str);
+            if (String.Equals(Aux.peticion, "chatMessage"))
+            {
+                Text nuevoTexto = GameObject.Instantiate(Message);
+                nuevoTexto.transform.parent = chatBoxContent.transform;
+                mensaje = Mensaje.getFromJson(Aux.json);
+                nuevoTexto.text = mensaje.Emisor+": " + mensaje.Messaje;
+                str = "accede";
+
+            }
+            if (String.Equals(Aux.peticion, "sendNotificacion"))
+            {
+                mensaje = Mensaje.getFromJson(Aux.json);
+                if (String.Equals(mensaje.Receptor, perfil.Nombre))
+                {
+                    perfilData.Campañas.Add(Campaña.getFromJson(mensaje.Messaje));
+                    botonCampañaTexto.text = perfilData.Campañas[0].Nombre;
+                }
+                str = "accede";
+
+            }
+        }
+    }
+
+    public void activarPopupInvitar()
+    {
+        PopUpUsuario.SetActive(true);
+    }
+
+    public void desactivarPopUpInvitar()
+    {
+        PopUpUsuario.SetActive(false);
+    }
+    public void InvitarJugador()
+    {
+        Carga cargaInvitar = new Carga();
+        cargaInvitar.peticion = "sendNotificacion";
+        mensaje.Emisor = perfil.Nombre;
+        mensaje.Receptor = invitaUsuario.text;
+        mensaje.Messaje = perfilData.Campañas[0].getAsJSON();
+        mensaje.Tipo = "invitacion";
+        cargaInvitar.json = mensaje.getAsJSON();
+
+        Debug.Log(carga.json);
+        sender.send(cargaInvitar.getAsJSON());
+    }
+
+    public void tirarDados()
+    {
+
+        carga.peticion = "chatMessage";
+        carga.assigned = "true";
+        mensaje.Emisor = perfil.Nombre;
+        mensaje.Messaje = ""+ RollDice(0,0);
+        carga.json = mensaje.getAsJSON();
+        Debug.Log(carga.json);
+        sender.send(carga.getAsJSON());
+
     }
 
 }

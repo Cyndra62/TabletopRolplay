@@ -9,7 +9,15 @@ public class Mensaje
     public string Receptor;
     public string Emisor;
     public string Messaje;
+    public string Tipo;
 
+    public Mensaje()
+    {
+        Receptor = null;
+        Emisor = null;
+        Messaje = null;
+        Tipo = null;
+    }
     public string getAsJSON()
     {
         string json = JsonUtility.ToJson(this);
