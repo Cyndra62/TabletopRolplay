@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TokenMovement : MonoBehaviour
 {
@@ -11,11 +12,13 @@ public class TokenMovement : MonoBehaviour
     Rigidbody2D rb;
     public UIManager uIManager;
     public Token token;
+    public TextMesh textoEncima;
     float tiempo;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         uIManager = GameObject.FindGameObjectWithTag("Canvas").GetComponent<UIManager>();
+        textoEncima.text = token.Perfil;
     }
 
     // Update is called once per frame
@@ -32,7 +35,7 @@ public class TokenMovement : MonoBehaviour
             rb.velocity = new Vector2(dirX * moveSpeed, dirY * moveSpeed);
             token.Y = this.gameObject.transform.position.y;
             token.X = this.gameObject.transform.position.x;
-            if (tiempo > 0.5)
+            if (tiempo > 0.1)
             {
                 tiempo = 0;
                 uIManager.sendInfoToken(token);

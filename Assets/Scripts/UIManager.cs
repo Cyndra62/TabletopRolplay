@@ -508,6 +508,7 @@ public class UIManager : MonoBehaviour
         carga.assigned = "true";
         mensaje.Emisor = perfil.Nombre;
         mensaje.Messaje = mensajeAEnviar.text;
+        mensajeAEnviar.text = "";
         carga.json = mensaje.getAsJSON();
         Debug.Log(carga.json);
         sender.send(carga.getAsJSON());
