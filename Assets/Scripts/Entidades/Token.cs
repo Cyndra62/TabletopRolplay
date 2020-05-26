@@ -7,10 +7,9 @@ using UnityEngine;
 public class Token
 {
     public string Img;
-    public int X;
-    public int Y;
+    public float X;
+    public float Y;
     public string Perfil;
-    public string IsNPC;
 
     public Token()
     {
@@ -18,6 +17,15 @@ public class Token
         Y = 0;
         Img = "";
         Perfil = null;
-        IsNPC = "false";
+    }
+    public string getAsJSON()
+    {
+        string json = JsonUtility.ToJson(this);
+        Debug.Log(json);
+        return json;
+    }
+    public static Token getFromJson(string CampañaJSON)
+    {
+        return JsonUtility.FromJson<Token>(CampañaJSON);
     }
 }

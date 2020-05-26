@@ -114,6 +114,11 @@ public class UIManager : MonoBehaviour
     public GameObject chatBoxContent;
     public Text Message;
     public InputField mensajeAEnviar;
+    public InputField numDados;
+    public InputField tipoDado;
+    public InputField modificador;
+    public GameObject PopupDados;
+    public GameObject ficha;
     
     [Header("CrearCampaña")]
     public GameObject crearCampaña;
@@ -122,14 +127,15 @@ public class UIManager : MonoBehaviour
 
     TcpClient client;
     string str = "accede";
-    Perfil perfil;
-    Carga carga;
-    PerfilData perfilData;
-    Campaña campaña;
-    CampañaData campañaData;
-    Personaje personaje;
-    Mensaje mensaje;
-    Jugador jugador;
+    public Perfil perfil;
+    public Carga carga;
+    public PerfilData perfilData;
+    public Campaña campaña;
+    public CampañaData campañaData;
+    public Personaje personaje;
+    public Mensaje mensaje;
+    public Jugador jugador;
+    
     void Start()
     {
         try
@@ -182,10 +188,21 @@ public class UIManager : MonoBehaviour
 
     
 
-    public int RollDice(int atributo,int habilidad)
+    public string RollDice(int numDados,int tipo,int modificador)
     {
-        int resultado=0;
-        resultado = UnityEngine.Random.Range(1, 20) + atributo + habilidad;
+        string resultado = "";
+        string tiradas = "";
+        int total = 0;
+        resultado = "Numero de dados = " + numDados + "d" + tipo + " + " + " : ";
+        for (int i = 0; i< numDados; i++)
+        {
+            int valor = UnityEngine.Random.Range(1, 20);
+            tiradas = tiradas +" + "+ valor;
+            total = total + valor;
+        }
+        total = total + modificador;
+        resultado += tiradas +" + "+modificador+ " = " + total ;
+        
         return resultado;
     }
     public void ButtonToRegistro()
@@ -818,11 +835,21 @@ public class UIManager : MonoBehaviour
 
         crearPersonajes.SetActive(true);
         menu.SetActive(false);
+        UICampaña.SetActive(false);
     }
     public void volverMenu()
     {
-        menu.SetActive(true);
-        crearPersonajes.SetActive(false);
+        if(string.Equals(carga.assigned,"true"))
+        {
+            UICampaña.SetActive(true);
+            crearPersonajes.SetActive(false);
+        }
+        else
+        {
+            menu.SetActive(true);
+            crearPersonajes.SetActive(false);
+        }
+        
     }
 
     public void borrarPersonaje()
@@ -886,8 +913,14 @@ public class UIManager : MonoBehaviour
                     botonCampañaTexto.text = perfilData.Campañas[0].Nombre;
                 }
                 str = "accede";
-
             }
+            if (String.Equals(Aux.peticion, "tokenMove"))
+            {
+                Token fichaAux = Token.getFromJson(Aux.json);
+                invocarToken(fichaAux);
+                str = "accede";
+            }
+
         }
     }
 
@@ -920,15 +953,60 @@ public class UIManager : MonoBehaviour
         carga.peticion = "chatMessage";
         carga.assigned = "true";
         mensaje.Emisor = perfil.Nombre;
-        mensaje.Messaje = ""+ RollDice(0,0);
+        mensaje.Messaje = ""+ RollDice(int.Parse(numDados.text),int.Parse(tipoDado.text),int.Parse(modificador.text));
         carga.json = mensaje.getAsJSON();
         Debug.Log(carga.json);
         sender.send(carga.getAsJSON());
 
     }
 
+    public void activarPoPUpDados()
+    {
+        PopupDados.SetActive(true);
+    }
+
+    public void desactivarPoPUpDados()
+    {
+        PopupDados.SetActive(false);
+    }
+
+    public void botonInvocarToken()
+    {
+        invocarToken(null);
+    }
+
+    public void invocarToken(Token invFicha)
+    {
+        if (invFicha == null)
+        {
+            GameObject token = GameObject.Instantiate(ficha);
+            token.transform.position = new Vector3(-3, -4, 0);
+            token.GetComponent<TokenMovement>().token.Perfil = perfil.Nombre;
+            token.GetComponent<SpriteRenderer>().color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+            token.name = perfil.Nombre;
+        }
+        else if (GameObject.Find(invFicha.Perfil)==null)
+        {
+            GameObject token = GameObject.Instantiate(ficha);
+            token.transform.position = new Vector3(-3, -4, 0);
+            token.GetComponent<TokenMovement>().token = invFicha;
+            token.GetComponent<SpriteRenderer>().color = UnityEngine.Random.ColorHSV(0f,1f,1f,1f,0.5f,1f);
+            token.name = invFicha.Perfil;
+        }
+        else
+        {
+            GameObject.Find(invFicha.Perfil).GetComponent<TokenMovement>().token = invFicha;
+        }
+        
+    }
+    public void sendInfoToken(Token token)
+    {
+        carga.peticion = "tokenMove";
+        carga.assigned = "true";
+        carga.json = token.getAsJSON();
+        Debug.Log(carga.json);
+        sender.send(carga.getAsJSON());
+    }
+
+
 }
-
-
-
-
