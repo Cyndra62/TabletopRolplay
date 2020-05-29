@@ -3952,7 +3952,7 @@ PrefabInstance:
     - target: {fileID: 767046179823968541, guid: e6b85863b7780cb4998eeb3e63acce98,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1467926324203544394, guid: e6b85863b7780cb4998eeb3e63acce98,
         type: 3}
@@ -5708,6 +5708,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1877871643583732265, guid: 776f6fc2799ba9d4da2637b8995fc8de,
+        type: 3}
+      propertyPath: m_FontData.m_BestFit
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1901015505335972267, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -5881,7 +5886,7 @@ PrefabInstance:
     - target: {fileID: 3538050754470426680, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: -3.9875193
       objectReference: {fileID: 0}
     - target: {fileID: 3538050754470426680, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}
@@ -5901,7 +5906,7 @@ PrefabInstance:
     - target: {fileID: 3538050754470426680, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.03716612
+      value: 0.037166595
       objectReference: {fileID: 0}
     - target: {fileID: 3538050754470426680, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}
@@ -6131,12 +6136,12 @@ PrefabInstance:
     - target: {fileID: 4664790792037229415, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4664790792037229415, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4664790792037229415, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}
@@ -6336,7 +6341,7 @@ PrefabInstance:
     - target: {fileID: 6414588418621086925, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6505817982779333110, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}
@@ -6388,6 +6393,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 6680199554272815790, guid: 776f6fc2799ba9d4da2637b8995fc8de,
+        type: 3}
+      propertyPath: m_FontData.m_BestFit
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6849050899413862891, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -6431,17 +6441,17 @@ PrefabInstance:
     - target: {fileID: 6994422571543369413, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6994422571543369413, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6994422571543369413, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -34.536865
       objectReference: {fileID: 0}
     - target: {fileID: 6994422571543369413, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}
@@ -6652,6 +6662,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8478007965952854823, guid: 776f6fc2799ba9d4da2637b8995fc8de,
+        type: 3}
+      propertyPath: m_ChildAlignment
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8478007965952854823, guid: 776f6fc2799ba9d4da2637b8995fc8de,
+        type: 3}
+      propertyPath: m_ChildForceExpandWidth
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8943591853655540925, guid: 776f6fc2799ba9d4da2637b8995fc8de,
         type: 3}

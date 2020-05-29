@@ -37,8 +37,11 @@ public class TokenMovement : MonoBehaviour
             token.X = this.gameObject.transform.position.x;
             if (tiempo > 0.1)
             {
+                if (dirX != 0 || dirY != 0)
+                {
+                    uIManager.sendInfoToken(token);
+                }
                 tiempo = 0;
-                uIManager.sendInfoToken(token);
             }
             tiempo = tiempo + Time.deltaTime;
 

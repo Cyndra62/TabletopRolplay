@@ -441,6 +441,7 @@ public class UIManager : MonoBehaviour
         campaña.DM = perfil.Id;
         Debug.Log(campaña.DM);
         StartCoroutine(enviarCampaña());
+        
 
     }
 
@@ -465,16 +466,13 @@ public class UIManager : MonoBehaviour
             crearCampaña.SetActive(false);
             botonCampañaTexto.text = campaña.Nombre;
             menu.SetActive(true);
-
+            perfilData.Campañas.Add(campaña);
         }
     }
 
     public void DeleteCampaña()
     {
-        if(perfil.Id == perfilData.Campañas[0].DM)
-        {
             StartCoroutine(borrarCampaña());
-        }
     }
 
     IEnumerator borrarCampaña()
@@ -482,7 +480,7 @@ public class UIManager : MonoBehaviour
         loadingLogIn.SetActive(true);
 
         carga.peticion = "deleteCampaña";
-        carga.json = @"" + perfilData.Campañas[0].getAsJSON() + "";
+        carga.json = "{\"Perfil\": "+perfil.Id+", \"Campaña\": "+perfilData.Campañas[0].Id+"}";
         Debug.Log(carga.json);
         sender.send(carga.getAsJSON());
 
@@ -500,6 +498,7 @@ public class UIManager : MonoBehaviour
 
         }
     }
+
 
     public void enviarMensaje()
     {
@@ -550,39 +549,22 @@ public class UIManager : MonoBehaviour
 
     public void salirCampaña()
     {
-        StartCoroutine(leaveCampaña());
-    }
-
-    IEnumerator leaveCampaña()
-    {
-        loadingLogIn.SetActive(true);
 
         carga.peticion = "leaveCampaña";
-        carga.json = perfil.Id.ToString();
+        carga.json = perfil.getAsJSON();
         Debug.Log(carga.json);
         sender.send(carga.getAsJSON());
-
-        yield return new WaitForSeconds(Seconds);
-        try
+        carga.assigned = "false";
+        GameObject[] fichas = GameObject.FindGameObjectsWithTag("Token");
+        foreach (GameObject ficha in fichas)
         {
-            carga = Carga.getFromJSON(str);
+            Destroy(ficha);
         }
-        catch(Exception ex)
-        {
-            Debug.Log(ex);
-        }
-        if (carga.json.Equals("denied"))
-        {
-            loadingLogIn.SetActive(false);
-        }
-        else
-        {
-            loadingLogIn.SetActive(false);
-            menu.SetActive(true);
-            UICampaña.SetActive(false);
-
-        }
+        menu.SetActive(true);
+        UICampaña.SetActive(false);
     }
+
+
 
     public void toCrearPersonaje()
     {
@@ -746,6 +728,7 @@ public class UIManager : MonoBehaviour
         else
         {
             loadingLogIn.SetActive(false);
+            botonPersonajeTexto.text = jugador.Nombre;
             menu.SetActive(true);
             crearPersonajes.SetActive(false);
 
@@ -921,6 +904,29 @@ public class UIManager : MonoBehaviour
                 invocarToken(fichaAux);
                 str = "accede";
             }
+            if (String.Equals(Aux.peticion, "leaveCampaña"))
+            {
+                if (String.Equals(Aux.json, "kick"))
+                {
+                    carga.assigned = "false";
+                    GameObject[] fichas = GameObject.FindGameObjectsWithTag("Token");
+                    foreach (GameObject ficha in fichas)
+                    {
+                        Destroy(ficha);
+                    }
+                    menu.SetActive(true);
+                    UICampaña.SetActive(false);
+                    str = "accede";
+                }
+                else
+                {
+                    Perfil aux = Perfil.getFromJson(Aux.json);
+                    Destroy(GameObject.Find(aux.Nombre));
+                    str = "accede";
+                }
+                
+            }
+            
 
         }
     }
@@ -1001,7 +1007,7 @@ public class UIManager : MonoBehaviour
         
     }
     public void sendInfoToken(Token token)
-    {
+    {   
         carga.peticion = "tokenMove";
         carga.assigned = "true";
         carga.json = token.getAsJSON();
