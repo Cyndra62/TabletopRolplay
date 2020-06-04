@@ -145,7 +145,7 @@ public class UIManager : MonoBehaviour
             perfilData = new PerfilData();
             campaña = new Campaña();
             campañaData = new CampañaData();
-            client = new TcpClient("79.152.249.254", 13000);
+            client = new TcpClient("81.39.98.108", 13000);
             sender = new SenderReceiver(client);
             listener = new Thread(receive);
             jugador = new Jugador();
