@@ -119,6 +119,7 @@ public class UIManager : MonoBehaviour
     public InputField modificador;
     public GameObject PopupDados;
     public GameObject ficha;
+    public GameObject botonInvitarUsuario;
     
     [Header("CrearCampaña")]
     public GameObject crearCampaña;
@@ -291,6 +292,8 @@ public class UIManager : MonoBehaviour
             {
                 botonCampañaTexto.text = perfilData.Campañas[0].Nombre;
             }
+
+
             if (perfilData.Jugadores.Count == 0)
             {
                 botonPersonajeTexto.text = "Vacio";
@@ -349,6 +352,7 @@ public class UIManager : MonoBehaviour
         UICampaña.gameObject.SetActive(false);
         crearCampaña.gameObject.SetActive(false);
         ajustes.gameObject.SetActive(false);
+        crearCampaña.SetActive(false);
         menu.gameObject.SetActive(true);
     }
 
@@ -427,21 +431,23 @@ public class UIManager : MonoBehaviour
     public void guardarCampaña()
     {
         Debug.Log("Entra");
-        campaña.Nombre = nombreCampaña.text;
-        if(juego.value == 1)
+        if (!String.IsNullOrEmpty(campaña.Nombre))
         {
-            campaña.Juego = "The Awakens";
-            Debug.Log("Pone The Awakens");
+            campaña.Nombre = nombreCampaña.text;
+            if (juego.value == 1)
+            {
+                campaña.Juego = "The Awakens";
+                Debug.Log("Pone The Awakens");
+            }
+            else if (juego.value == 2)
+            {
+                campaña.Juego = "Dungeons & Dragons";
+                Debug.Log("Pone D&D");
+            }
+            campaña.DM = perfil.Id;
+            Debug.Log(campaña.DM);
+            StartCoroutine(enviarCampaña());
         }
-        else if(juego.value == 2)
-        {
-            campaña.Juego = "Dungeons & Dragons";
-            Debug.Log("Pone D&D");
-        }
-        campaña.DM = perfil.Id;
-        Debug.Log(campaña.DM);
-        StartCoroutine(enviarCampaña());
-        
 
     }
 
@@ -519,6 +525,10 @@ public class UIManager : MonoBehaviour
     public void unirseCampaña()
     {
         StartCoroutine(joinCampaña());
+        if(perfilData.Campañas[0].DM == perfil.Id)
+        {
+            botonInvitarUsuario.SetActive(true);
+        }
     }
 
     IEnumerator joinCampaña()
@@ -1013,6 +1023,10 @@ public class UIManager : MonoBehaviour
         carga.json = token.getAsJSON();
         Debug.Log(carga.json);
         sender.send(carga.getAsJSON());
+    }
+    public void apagar()
+    {
+        Application.Quit();
     }
 
 
