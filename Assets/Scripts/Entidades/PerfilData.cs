@@ -12,7 +12,7 @@ public class PerfilData
 
     public PerfilData()
     {
-        Avatar = null;
+        Avatar = "";
         Jugadores = new List<Jugador>();
         Campañas = new List<Campaña>();
     }

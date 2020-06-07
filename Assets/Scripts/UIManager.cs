@@ -12,13 +12,12 @@ using System.Security.Cryptography;
 
 public class UIManager : MonoBehaviour
 {
-    private const int Seconds = 8;
+    private const int Seconds = 4; //Tiempo de espera para recivir informacion del servidor
 
-    // Start is called before the first frame update
 
     public SenderReceiver sender;
     public Thread listener;
-
+    //Todos los objetos de la interfaz a continuacion
     [Header("Registro")]
     public GameObject UIRegistro;
     public InputField CorreoRegistro;
@@ -106,6 +105,7 @@ public class UIManager : MonoBehaviour
     public GameObject ajustes;
     public InputField cambioNombre;
     public GameObject confirmacion;
+    public RawImage image;
 
     [Header("Campaña")]
     public GameObject UICampaña;
@@ -125,7 +125,7 @@ public class UIManager : MonoBehaviour
     public GameObject crearCampaña;
     public InputField nombreCampaña;
     public Dropdown juego;
-
+    //Variables necesarias para el funcionamiento de las funciones
     TcpClient client;
     string str = "accede";
     public Perfil perfil;
@@ -136,7 +136,12 @@ public class UIManager : MonoBehaviour
     public Personaje personaje;
     public Mensaje mensaje;
     public Jugador jugador;
-    
+
+
+    /*
+     * El metodo Start se ejecuta al iniciar el programa. En este caso inicializa todos los objetos (Perfil, Carga, etc...) y
+     * tambien inicializa la escucha del servidor con la ip y en el puerto indicado.
+    */
     void Start()
     {
         try
@@ -159,11 +164,21 @@ public class UIManager : MonoBehaviour
             connectionError.SetActive(true);
         }
     }
+
+    /*
+     * El metodo update se ejecuta a cada frame. En este caso lo utilizamos para que el metodo ProcessData se ejecute continuamente
+     */
     public void Update()
     {
         ProcessData();
         
     }
+
+    /*
+     * En esta region esta el metodo recieve, el cual se encarga de leer la informacion que llega del servidor, colocandola en la variable str para poder utilizar los datos
+     * en el resto de metodos.
+     */
+
     #region RECEIVER    
     public void receive()
     {
@@ -188,7 +203,7 @@ public class UIManager : MonoBehaviour
     #endregion
 
     
-
+    // En este metodo permitimos tirar un numero de dados segun los que quieras tirar y el tipo de dado que quieras tirar, al cual sumamos el modificador que hayas utilizado.
     public string RollDice(int numDados,int tipo,int modificador)
     {
         string resultado = "";
@@ -206,18 +221,22 @@ public class UIManager : MonoBehaviour
         
         return resultado;
     }
+
+    //metodo para activar la pantalla de registro
     public void ButtonToRegistro()
     {
         UIRegistro.SetActive(true);
         UILogin.SetActive(false);
     }
 
+    //metodo para activar la pantalla de login
     public void ButtonToLogin()
     {
         UIRegistro.SetActive(false);
         UILogin.SetActive(true);
     }
 
+    //metodo del boton que confirma el login. Inicia la Courutine logIn()
     public void ButtonConfirmLogin()
     {
         
@@ -225,6 +244,7 @@ public class UIManager : MonoBehaviour
 
     }
 
+    //metodo del boton que confirma el registro. Comprueba si todos los datos estan rellenos y si lo estan comienza la Couritine Register()
     public void ButtonConfirmRegister()
     {
         if (!string.IsNullOrEmpty(PassRegistro.text) && !string.IsNullOrEmpty(ConfPassRegistro.text) && PassRegistro.text == ConfPassRegistro.text)
@@ -234,6 +254,7 @@ public class UIManager : MonoBehaviour
 
     }
 
+    // metodo IEnumerator, obtiene los datos del registro de la interfaz y los monta dentro del objeto perfil. Despues los envia al servidor el cual responde si se ha aceptado el registro o no.
     IEnumerator Register()
     {
         loadingLogIn.SetActive(true);
@@ -261,6 +282,11 @@ public class UIManager : MonoBehaviour
             userNameMenu.text = perfil.Nombre;
         }
     }
+
+    /*
+     * metodo IEnumerator, obtiene los datos del login de la interfaz y los monta dentro del objeto perfil. Despues los envia al servidor y espera a la respuesta de si le permite logearse o no. Si le deja
+     * el metodo tambien administra toda la informacion recibida insertandola en los objetos correspondientes
+     */
     IEnumerator logIn()
     {
         loadingLogIn.SetActive(true);
@@ -292,8 +318,6 @@ public class UIManager : MonoBehaviour
             {
                 botonCampañaTexto.text = perfilData.Campañas[0].Nombre;
             }
-
-
             if (perfilData.Jugadores.Count == 0)
             {
                 botonPersonajeTexto.text = "Vacio";
@@ -303,7 +327,10 @@ public class UIManager : MonoBehaviour
                 botonPersonajeTexto.text = perfilData.Jugadores[0].Nombre;
                 personaje = perfilData.Jugadores[0].getPersonaje();
             }
-            
+            if (!String.IsNullOrEmpty(perfilData.Avatar)||!String.Equals(perfilData.Avatar,""))
+            {
+                image.texture = stringToIMG(perfilData.Avatar);
+            }
             loadingLogIn.SetActive(false);
             UILogin.SetActive(false);
             menu.SetActive(true);
@@ -312,6 +339,18 @@ public class UIManager : MonoBehaviour
         
     }
 
+    /*
+     * Este metodo convierte un string de una imagen en una cadena.
+     */
+    public Texture2D stringToIMG(string cadena)
+    {
+        byte[] bytes = Convert.FromBase64String(cadena);
+        Texture2D mytexture = new Texture2D(2, 2);
+        mytexture.LoadImage(bytes);
+        return mytexture;
+    }
+
+    // Este metodo permite salir de la aplicacion, si nos encontramos en el editor de unity quita el play, y si estamos en build, cierra el programa.
     public void ExitGame()
     {
 #if UNITY_EDITOR     
@@ -329,6 +368,7 @@ public class UIManager : MonoBehaviour
 #endif
     }
 
+    //Este metodo activa la pantalla de ajustes.
     public void toAjustes()
     {
         menu.gameObject.SetActive(false);
@@ -336,50 +376,64 @@ public class UIManager : MonoBehaviour
 
     }
 
+    //Este metodo activa la pantalla de crear campaña
     public void toCrearCampaña()
     {
         menu.gameObject.SetActive(false);
         crearCampaña.gameObject.SetActive(true);
     }
+
+    //Este metodo activa la UI de la campaña.
     public void toCampaña()
     {
         menu.gameObject.SetActive(false);
         UICampaña.gameObject.SetActive(true);
 
     }
+
+    //Este metodo permite volver al menu
     public void backToMenu()
     {
         UICampaña.gameObject.SetActive(false);
         crearCampaña.gameObject.SetActive(false);
         ajustes.gameObject.SetActive(false);
-        crearCampaña.SetActive(false);
+        crearCampaña.gameObject.SetActive(false);
         menu.gameObject.SetActive(true);
     }
 
+    //Este metodo activa el popup de confirmacion.
     public void ajustesActivarPopUp()
     {
         confirmacion.SetActive(true);
     }
+
+    //Este metodo desactiva el popup de confirmacion
     public void ajustesDesactivarPoPUp()
     {
         confirmacion.SetActive(false);
     }
 
-    public void ajustesCambiarNombre()
+    //Este metodo comprueba si el cambio de nombre del perfil esta vacio o no. Si no esta vacio (Puede ser el mismo), inicia la courutine Modificar Perfil.
+    public void ajustesCambiarPerfil()
     {
         if (!String.IsNullOrEmpty(cambioNombre.text))
         {
-            StartCoroutine(ModificarNombre());
+            StartCoroutine(ModificarPerfil());
         }
     }
-
-    IEnumerator ModificarNombre()
+    // Metodo Courutine, este metodo modifica el objeto perfil y mediante el objeto carga lo envia al servidor. Espera a que el servidor le responda si se han producido los cambios o no.
+    IEnumerator ModificarPerfil()
     {
         loadingLogIn.SetActive(true);
 
 
         perfil.Nombre = cambioNombre.text;
-
+        /*Texture2D texture = (Texture2D)image.texture;
+        byte[] bytes;
+        bytes = texture.EncodeToPNG();
+        perfilData.Avatar = Convert.ToBase64String(bytes);    (Esto esta comentado debido a que no nos ha dado tiempo a terminar de implementarlo y da errores, vasicamente, convierte una imagen en un string.)
+        */
+        perfil.PerfilJSON = perfilData.getAsJSON();
 
         carga.peticion = "updateProfile";
         carga.json = @"" + perfil.getAsJSON() + "";
@@ -400,11 +454,13 @@ public class UIManager : MonoBehaviour
         }
     }
 
-
+    //Este metodo inicia la courutine BorrarPerfil()
     public void eliminarPerfil()
     {
         StartCoroutine(BorrarPerfil());
     }
+
+    //Metodo Courutine, envia al servidor la peticion de borrar un perfil y el perfil en cuestion. Despues te develve a la pantalla de login.
     IEnumerator BorrarPerfil()
     {
         loadingLogIn.SetActive(true);
@@ -428,6 +484,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    //Este metodo coje los datos de la interfaz y monta un objeto campaña. Despues inicia la Courutine EnviarCampaña.
     public void guardarCampaña()
     {
         Debug.Log("Entra");
@@ -451,6 +508,7 @@ public class UIManager : MonoBehaviour
 
     }
 
+    //Manda al servidor un objeto carga con la informacion de la campaña. Espera a la respuesta del servidor y si es satisfactoria te devuelve al menu. Si no es satisfactoria desaparece la pantalla de carga.
     IEnumerator enviarCampaña()
     {
         loadingLogIn.SetActive(true);
@@ -476,11 +534,13 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    //Este metodo inicia la Courutine BorrarCampaña
     public void DeleteCampaña()
     {
             StartCoroutine(borrarCampaña());
     }
 
+    //Metodo Courutine, este metodo manda al servidor un objeto carga con la peticion de borrar y los datos de la campaña. Si es satisfactorio borra la campaña. Si no, no lo hace.
     IEnumerator borrarCampaña()
     {
         loadingLogIn.SetActive(true);
@@ -505,7 +565,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-
+    //Este metodo envia un mensaje del chat al servidor. Este luego se encarga de repartirlo al resto de usuarios.
     public void enviarMensaje()
     {
 
@@ -521,7 +581,7 @@ public class UIManager : MonoBehaviour
     }
 
 
-
+    //Este metodo inicia la courutina joinCampaña, ademas si el usuario es el DM de la campaña (el creador), le permite invitar a otros usuarios a esta.
     public void unirseCampaña()
     {
         StartCoroutine(joinCampaña());
@@ -531,6 +591,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    //Metodo Courutine, Este metodo inicia la conexion con la campaña. Si esta todo correcto activa la UI de la campaña.
     IEnumerator joinCampaña()
     {
         loadingLogIn.SetActive(true);
@@ -557,6 +618,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    //Este metodo sirve para salir de la campaña. No importa lo que devuelva el servidor ya que siempre se puede salir. Tambien borra todos los GameObject Token, de la escena, para evitar problemas.
     public void salirCampaña()
     {
 
@@ -574,8 +636,7 @@ public class UIManager : MonoBehaviour
         UICampaña.SetActive(false);
     }
 
-
-
+    //Este metodo activa la pantalla de creacion de jugadores/personajes
     public void toCrearPersonaje()
     {
         carga.peticion = "createCharacter";
@@ -583,6 +644,8 @@ public class UIManager : MonoBehaviour
         crearPersonajes.SetActive(true);
         menu.SetActive(false);
     }
+
+    //Este metodo activa la pantalla de los atributos.
     public void changeAtributos()
     {
         vistaAtributos.SetActive(true);
@@ -591,6 +654,8 @@ public class UIManager : MonoBehaviour
         vistaRecursos.SetActive(false);
         vistaFacultades.SetActive(false);
     }
+
+    //Este metodo activa la pantalla de las habilidades
     public void changeHabilidades()
     {
         vistaAtributos.SetActive(false);
@@ -599,6 +664,8 @@ public class UIManager : MonoBehaviour
         vistaRecursos.SetActive(false);
         vistaFacultades.SetActive(false);
     }
+
+    //Este metodo activa la pantalla de las profesiones
     public void changeProfesiones()
     {
         vistaAtributos.SetActive(false);
@@ -607,6 +674,8 @@ public class UIManager : MonoBehaviour
         vistaRecursos.SetActive(false);
         vistaFacultades.SetActive(false);
     }
+
+    //Este metodo activa la pantalla de los recursos
     public void changeRecursos()
     {
         vistaAtributos.SetActive(false);
@@ -615,6 +684,8 @@ public class UIManager : MonoBehaviour
         vistaRecursos.SetActive(true);
         vistaFacultades.SetActive(false);
     }
+
+    //Este metodo activa la pantalla de las facultades (No implementadas debido a su extension y a que no existen todas aun en el juego de rol de mesa The Awakens)
     public void changeFacultades()
     {
         vistaAtributos.SetActive(false);
@@ -624,6 +695,7 @@ public class UIManager : MonoBehaviour
         vistaFacultades.SetActive(true);
     }
 
+    //Este metodo guarda todos los datos del jugador/personaje dentro del objeto personaje.
     public void salvarDatosPj()
     {
         personaje.nombre = nombre.text;
@@ -708,12 +780,15 @@ public class UIManager : MonoBehaviour
         jugador.Campaña = perfilData.Campañas[0].Id;
         jugador.JugadorJSON = personaje.getAsJSON();
     }
+
+    //Este metodo activa el metodo de salvarDatosPj y la Courutine de enviarJugador
     public void guardarFicha()
     {
         salvarDatosPj();
         StartCoroutine(enviarJugador());
     }
 
+    //Este metodo envia los datos del jugador/personaje al servidor para ser almacenados. Si esta todo correcto, te devuelve al menu.
     IEnumerator enviarJugador()
     {
         loadingLogIn.SetActive(true);
@@ -745,6 +820,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    //Este metodo te permite ver uno de tus personajes extrayendo la informacion de el del servidor. Activando la pantalla de creacion de personajes por si necesitas modificar algun dato.
     public void verPersonaje()
     {
         carga.peticion = "updateCharacter";
@@ -831,6 +907,8 @@ public class UIManager : MonoBehaviour
         menu.SetActive(false);
         UICampaña.SetActive(false);
     }
+
+    //Este metodo permite volver al menu o a la UI de la campaña desde la creacion de personajes. Segun si entraste desde la campaña o desde el menu principal
     public void volverMenu()
     {
         if(string.Equals(carga.assigned,"true"))
@@ -846,10 +924,13 @@ public class UIManager : MonoBehaviour
         
     }
 
+    //Este metodo inicia la Courutine de borrarJugador
     public void borrarPersonaje()
     {
         StartCoroutine(borrarJugador());
     }
+
+    //Metodo Courutine el cual manda al servidor una peticion de borrar un personaje y la informacion de este, si todo va bien el personaje se elimina tanto del servidor como del local.
     IEnumerator borrarJugador()
     {
         loadingLogIn.SetActive(true);
@@ -883,6 +964,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    //Metodo para procesar la informacion que se recive del servidor conrinuamente, como las notificaciones, el chat, o el movimiento de los token segun la peticion recivida del servidor
     public void ProcessData()
     {
         if (!String.Equals(str, "accede"))
@@ -941,15 +1023,19 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    //metodo para activar el popup de la invitacion
     public void activarPopupInvitar()
     {
         PopUpUsuario.SetActive(true);
     }
 
+    //metodo para desactivar el popup de la invitacion
     public void desactivarPopUpInvitar()
     {
         PopUpUsuario.SetActive(false);
     }
+
+    //metodo para invitar a un jugador a la campaña. Manda la informacion en una carga al servidor con los datos del emisor, receptor y el mensaje (En este caso el mensaje es la informacion de la campaña)
     public void InvitarJugador()
     {
         Carga cargaInvitar = new Carga();
@@ -964,6 +1050,7 @@ public class UIManager : MonoBehaviour
         sender.send(cargaInvitar.getAsJSON());
     }
 
+    //Este metodo activa el metodo de RollDice y manda el resultado mediante un mensaje de chat.
     public void tirarDados()
     {
 
@@ -977,21 +1064,25 @@ public class UIManager : MonoBehaviour
 
     }
 
+    //metodo que activa el popup de los dados
     public void activarPoPUpDados()
     {
         PopupDados.SetActive(true);
     }
 
+    //metodo que desactiva el popup de los dados
     public void desactivarPoPUpDados()
     {
         PopupDados.SetActive(false);
     }
 
+    //metodo que invoca el token del jugador
     public void botonInvocarToken()
     {
         invocarToken(null);
     }
 
+    //metodo que invoca un token depende de la informacion que le des, si no le das nada invoca el token del propio jugador. Si le das algo intentara buscar el token en cuestion y si no lo encuentra lo creara.
     public void invocarToken(Token invFicha)
     {
         if (invFicha == null)
@@ -1016,6 +1107,8 @@ public class UIManager : MonoBehaviour
         }
         
     }
+
+    //Metodo que envia la informacion del token al servidor, en este caso el nombre del perfil al que pertenece y su posicion
     public void sendInfoToken(Token token)
     {   
         carga.peticion = "tokenMove";
@@ -1024,6 +1117,8 @@ public class UIManager : MonoBehaviour
         Debug.Log(carga.json);
         sender.send(carga.getAsJSON());
     }
+
+    //metodo que apaga la aplicacion de golpe en caso de error de conexion
     public void apagar()
     {
         Application.Quit();
