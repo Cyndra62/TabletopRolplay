@@ -10,6 +10,7 @@ public class PerfilData
     public List <Jugador> Jugadores;
     public List<Campaña> Campañas;
 
+    //constructor del objeto
     public PerfilData()
     {
         Avatar = "";
@@ -17,6 +18,7 @@ public class PerfilData
         Campañas = new List<Campaña>();
     }
 
+    //metodo que convierte el objeto en un json
     public string getAsJSON()
     {
         string json = JsonUtility.ToJson(this);
@@ -24,6 +26,7 @@ public class PerfilData
         return json;
     }
 
+    //metodo que convierte el json en un objeto
     public static PerfilData getFromJson(string PerfilJSON)
     {
         return JsonUtility.FromJson<PerfilData>(PerfilJSON);

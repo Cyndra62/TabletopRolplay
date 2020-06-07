@@ -12,6 +12,7 @@ public class Jugador
     public int Campaña;
     public string JugadorJSON;
 
+    //constructor del jugador
     public Jugador()
     {
         Id = 0;
@@ -21,17 +22,21 @@ public class Jugador
         JugadorJSON = null;
     }
 
+    //metodo que convierte el objeto en un json
     public string getAsJSON()
     {
         string json = JsonUtility.ToJson(this);
         Debug.Log(json);
         return json;
     }
+
+    //metodo que convierte el json en un objeto
     public static Jugador getFromJson(string CampañaJSON)
     {
         return JsonUtility.FromJson<Jugador>(CampañaJSON);
     }
 
+    //metodo que transforma el JugadorJSON en un objeto personaje
     public Personaje getPersonaje()
     {
         return JsonUtility.FromJson<Personaje>(JugadorJSON);

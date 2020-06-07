@@ -54,6 +54,7 @@ public class Personaje
     public int nivel;
     public int puntosDeMejora;
 
+    //constructor del objeto personaje
     public Personaje()
     {
         nombre = null;
@@ -107,12 +108,15 @@ public class Personaje
         puntosDeMejora = 0;
 }
 
+    //metodo que convierte el objeto personaje en un json
     public string getAsJSON()
     {
         string json = JsonUtility.ToJson(this);
         Debug.Log(json);
         return json;
     }
+
+    //metodo que convierte el json en un objeto personaje
     public static Personaje getFromJson(string PersonajeJSON)
     {
         return JsonUtility.FromJson<Personaje>(PersonajeJSON);

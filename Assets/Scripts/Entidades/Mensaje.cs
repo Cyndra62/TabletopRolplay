@@ -11,6 +11,7 @@ public class Mensaje
     public string Messaje;
     public string Tipo;
 
+    //constructor del objeto
     public Mensaje()
     {
         Receptor = null;
@@ -18,6 +19,8 @@ public class Mensaje
         Messaje = null;
         Tipo = null;
     }
+
+    //metodo que convierte el objeto en un json
     public string getAsJSON()
     {
         string json = JsonUtility.ToJson(this);
@@ -25,6 +28,7 @@ public class Mensaje
         return json;
     }
 
+    //metodo que convierte el json en un objeto
     public static Mensaje getFromJson(string Mensaje)
     {
         return JsonUtility.FromJson<Mensaje>(Mensaje);

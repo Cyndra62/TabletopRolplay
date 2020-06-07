@@ -14,6 +14,8 @@ public class TokenMovement : MonoBehaviour
     public Token token;
     public TextMesh textoEncima;
     float tiempo;
+
+    //Metodo Start, busca el canvas y le coloca el nombre del usuario encima al token
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -22,12 +24,14 @@ public class TokenMovement : MonoBehaviour
     }
 
     // Update is called once per frame
+    // Obtiene la informacion del teclado de si pulsas wasd o las flechas de direccion y las guarda en variables
     void Update()
     {
         dirX = Input.GetAxis("Horizontal");
         dirY = Input.GetAxis("Vertical");
     }
 
+    //metodo fixedupdate que mueve el token segun las coordenadas obtenidas en el update y que envia estas al servidor mediante el metodo del UIManager, sendInfoToken
     private void FixedUpdate()
     {
         if (string.Equals(uIManager.carga.assigned, "true")&&string.Equals(uIManager.perfil.Nombre,token.Perfil))

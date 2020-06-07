@@ -16,12 +16,13 @@ public class SenderReceiver
     public StreamWriter sw;
     public StreamReader sr;
     public volatile bool isRunning;
-
+    //constructor del senderReceiver
     public SenderReceiver(TcpClient client)
     {
         Lanzar(client);
     }
 
+    //metodo que lanza la conexion con con el servidor
     public void Lanzar(TcpClient client)
     {
 
@@ -35,6 +36,7 @@ public class SenderReceiver
         listener.Start();*/
     }
 
+    //metodo que coloca si esta actibo o no
     public void setIsRunning(bool running)
     {
         lock (this) {
@@ -58,6 +60,8 @@ public class SenderReceiver
             finally { }
         }
     }*/
+
+    //metodo que para la conexion
     public void stopConnection()
     {
         lock (this)
@@ -78,12 +82,16 @@ public class SenderReceiver
             }
         }
     }
+
+    //Metodo que envia un mensaje al servidor
     public void send(string message)
     {
         sw.WriteLine(message);
         sw.Flush();
         Thread.Sleep(20);
     }
+
+    //metodo que obtiene si esta funcionando o no
     public bool getIsRunning()
     {
         lock (this)
@@ -92,6 +100,7 @@ public class SenderReceiver
         }
     }
     
+    //metodo que comprueba si el servidor esta conectado o no, si no esta conectado, devuelve un false
     public bool IsConnected {
         get
         {
@@ -126,6 +135,7 @@ public class SenderReceiver
         }
     }
 
+    //metodo que convierte una imagen en un string
     public string imgToString(string ruta)
     {
         Texture2D mytexture = null;
@@ -143,6 +153,7 @@ public class SenderReceiver
         else { return null; }
     }
 
+    //metodo que convierte un string en una imagen
     public Texture2D stringToIMG(string cadena)
     {
         byte[] bytes = Convert.FromBase64String(cadena);

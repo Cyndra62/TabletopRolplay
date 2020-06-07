@@ -13,6 +13,7 @@ public class Perfil
     public string Contraseña;
     public string PerfilJSON;
 
+    //constructor del perfil
     public Perfil()
     {
         Id = 0;
@@ -22,6 +23,7 @@ public class Perfil
         PerfilJSON = null;
     }
 
+    //metodo que convierte el perfil en un json
     public string getAsJSON()
     {
 
@@ -32,6 +34,7 @@ public class Perfil
         
     }
 
+    //metodo que convierte un json en un objeto perfil
     public static Perfil getFromJson(string PerfilJSON)
     {
         return JsonUtility.FromJson<Perfil>(PerfilJSON);

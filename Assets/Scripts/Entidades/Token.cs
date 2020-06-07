@@ -11,6 +11,7 @@ public class Token
     public float Y;
     public string Perfil;
 
+    //Constructor del objeto
     public Token()
     {
         X = 0;
@@ -18,14 +19,17 @@ public class Token
         Img = "";
         Perfil = null;
     }
+    //metodo para convertir el objeto Token en un json
     public string getAsJSON()
     {
         string json = JsonUtility.ToJson(this);
         Debug.Log(json);
         return json;
     }
-    public static Token getFromJson(string CampañaJSON)
+
+    //metodo para convertir el json en un objeto Token
+    public static Token getFromJson(string Token)
     {
-        return JsonUtility.FromJson<Token>(CampañaJSON);
+        return JsonUtility.FromJson<Token>(Token);
     }
 }

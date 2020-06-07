@@ -12,12 +12,15 @@ public class Campaña
     public int DM;
     public string CampañaJSON;
 
+    //metodo que transforma el objeto en un json
     public string getAsJSON()
     {
         string json = JsonUtility.ToJson(this);
         Debug.Log(json);
         return json;
     }
+
+    //constructor del objeto
     public Campaña()
     {
         Nombre = null;
@@ -27,6 +30,7 @@ public class Campaña
         CampañaJSON = null;
     }
 
+    //metodo que transforma el json en un objeto
     public static Campaña getFromJson(string campañaJSON)
     {
         return JsonUtility.FromJson<Campaña>(campañaJSON);

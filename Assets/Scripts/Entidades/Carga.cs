@@ -11,6 +11,7 @@ public class Carga
     public string json;
     public string assigned;
 
+    //constructor del objeto carga
     public Carga()
     {
         cuenta = null;
@@ -19,16 +20,20 @@ public class Carga
         assigned = "false";
     }
     
+    //metodo que obtiene el json
     public string getJSON()
     {
         return json;
     }
 
+    //metodo que transforma el objeto carga en un json
     public string getAsJSON() {
         string json;
         json = JsonUtility.ToJson(this);
         return json;
     }
+
+    //metodo que transforma un json en un objeto carga
     public static Carga getFromJSON(string jsonCarga)
     {
         return JsonUtility.FromJson<Carga>(jsonCarga);
