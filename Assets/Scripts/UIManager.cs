@@ -332,7 +332,7 @@ public class UIManager : MonoBehaviour
                 image.texture = stringToIMG(perfilData.Avatar);
             }
             loadingLogIn.SetActive(false);
-            cambioNombre.text = perfil.Nombre;
+            
             UILogin.SetActive(false);
             menu.SetActive(true);
             userNameMenu.text = perfil.Nombre;
@@ -373,6 +373,7 @@ public class UIManager : MonoBehaviour
     public void toAjustes()
     {
         menu.gameObject.SetActive(false);
+        cambioNombre.text = perfil.Nombre;
         ajustes.gameObject.SetActive(true);
 
     }
@@ -380,8 +381,14 @@ public class UIManager : MonoBehaviour
     //Este metodo activa la pantalla de crear campaña
     public void toCrearCampaña()
     {
-        menu.gameObject.SetActive(false);
-        crearCampaña.gameObject.SetActive(true);
+        
+        if(perfilData.Campañas.Count ==0)
+        {
+            crearCampaña.gameObject.SetActive(true);
+            menu.gameObject.SetActive(false);
+        }
+        
+        
     }
 
     //Este metodo activa la UI de la campaña.
@@ -489,7 +496,7 @@ public class UIManager : MonoBehaviour
     public void guardarCampaña()
     {
         Debug.Log("Entra");
-        if (!String.IsNullOrEmpty(campaña.Nombre))
+        if (!String.IsNullOrEmpty(nombreCampaña.text))
         {
             campaña.Nombre = nombreCampaña.text;
             if (juego.value == 1)
@@ -640,10 +647,14 @@ public class UIManager : MonoBehaviour
     //Este metodo activa la pantalla de creacion de jugadores/personajes
     public void toCrearPersonaje()
     {
-        carga.peticion = "createCharacter";
-        nombre.interactable = true;
-        crearPersonajes.SetActive(true);
-        menu.SetActive(false);
+        if(perfilData.Jugadores.Count == 0)
+        {
+            carga.peticion = "createCharacter";
+            nombre.interactable = true;
+            crearPersonajes.SetActive(true);
+            menu.SetActive(false);
+        }
+
     }
 
     //Este metodo activa la pantalla de los atributos.
@@ -780,6 +791,7 @@ public class UIManager : MonoBehaviour
         jugador.Perfil = perfil.Id;
         jugador.Campaña = perfilData.Campañas[0].Id;
         jugador.JugadorJSON = personaje.getAsJSON();
+        perfilData.Jugadores.Add(jugador);
     }
 
     //Este metodo activa el metodo de salvarDatosPj y la Courutine de enviarJugador
