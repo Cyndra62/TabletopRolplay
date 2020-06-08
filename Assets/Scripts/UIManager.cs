@@ -332,6 +332,7 @@ public class UIManager : MonoBehaviour
                 image.texture = stringToIMG(perfilData.Avatar);
             }
             loadingLogIn.SetActive(false);
+            cambioNombre.text = perfil.Nombre;
             UILogin.SetActive(false);
             menu.SetActive(true);
             userNameMenu.text = perfil.Nombre;
