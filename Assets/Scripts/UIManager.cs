@@ -554,7 +554,7 @@ public class UIManager : MonoBehaviour
         loadingLogIn.SetActive(true);
 
         carga.peticion = "deleteCampaña";
-        carga.json = "{\"Perfil\": "+perfil.Id+", \"Campaña\": "+perfilData.Campañas[0].Id+"}";
+        carga.json = "{\"Perfil\": "+perfil.Id+", \"Campaña\": "+"\""+perfilData.Campañas[0].Nombre+"\""+"}";
         Debug.Log(carga.json);
         sender.send(carga.getAsJSON());
 
